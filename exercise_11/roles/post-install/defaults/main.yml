@@ -1,0 +1,11 @@
+---
+# defaults file for post-install
+# Variables accessible by ALL the Hosts from the inventory file
+
+dbname: redhat
+
+
+
+ntp0: server 2.pk.pool.ntp.org
+ntp1: server 0.asia.pool.ntp.org
+ntp2:  server 2.asia.pool.ntp.org

@@ -1,0 +1,13 @@
+---
+# handlers file for post-install
+  - name: Start & enable NTP on Centos
+    service:
+      name: ntpd
+      enabled: yes
+      state: restarted
+    when: ansible_distribution == "CentOS"
+
+  - name: Start & enable NTP on Ubuntu
+    service:
+      name: ntp
+      enabled: yes

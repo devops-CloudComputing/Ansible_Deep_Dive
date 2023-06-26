@@ -1,0 +1,19 @@
+Web01 ansible_host=172.31.9.205 ansible_user=centos ansible_ssh_private_key_file=web01_key.pem
+Web02 ansible_host=172.31.4.185 ansible_user=centos ansible_ssh_private_key_file=web02_key.pem
+Db01 ansible_host=172.31.13.225 
+
+[websrvgrp]
+Web01
+Web02
+
+[dbsrvgrp]
+Db01
+
+[dc_ohio:children]
+websrvgrp
+dbsrvgrp
+
+
+[dc_ohio:vars]
+ansible_user=centos
+ansible_ssh_private_key_file=db01_key.pem

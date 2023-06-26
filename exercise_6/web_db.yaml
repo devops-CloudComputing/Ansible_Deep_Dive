@@ -1,0 +1,27 @@
+---
+- name: Setup DBserver
+  hosts: dbsrvgrp
+  become: yes
+  vars:
+    dbname: groups
+  tasks:
+
+    - name: Install Mysql-Python
+      yum:
+        name: MySQL-python
+        state: present
+
+    - name: Install Mysql server
+      yum:
+        name: mariadb-server
+        state: present
+    - name: Start and enable mariadb service
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+    - name: Create a new databse with name 'accounts'
+      mysql_db:
+          name: "{{dbname}}"
+          state: present
+

@@ -1,0 +1,88 @@
+---
+# tasks file for post-install
+
+  - name: Install packages on Centos
+    yum:
+       name: "{{item}}"
+       state: present
+    when: ansible_distribution == "CentOS"
+    loop:
+      - ntp
+      - wget
+      - git
+      - zip
+      - unzip
+
+  - name: Update apt package cache
+    apt:
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Install packages on Ubuntu
+    apt:
+       name: "{{item}}"
+       state: present
+    when: ansible_distribution == "Ubuntu"
+    loop:
+      - ntp
+      - wget
+      - git
+      - zip
+      - unzip
+
+  - name: Start & enable NTP on Centos
+    service:
+      name: ntpd
+      enabled: yes
+      state: started
+    when: ansible_distribution == "CentOS"
+
+  - name: Start & enable NTP on Ubuntu
+    service:
+      name: ntp
+      enabled: yes
+      state: started
+    when: ansible_os_family == "Debian"
+
+  - name: Add group
+    group:
+      name: devops
+      state: present
+
+  - name: Add users
+    user:
+      name: "{{item}}" 
+      state:  present
+      groups: devops
+    loop:
+     - user1
+     - user2
+     - user3
+  - name: Banner File /etc/motd
+    copy:
+     content: "This {{ansible_distribution}} is Managed by Ansible." 
+     dest: /etc/motd
+
+  - name: Deploy NTP conf file for RedHat
+    template:
+       src: ntp_redhat.conf.j2
+       dest: /etc/ntp.conf
+    when: ansible_os_family == "RedHat"
+    notify:
+       - Start & enable NTP on Centos
+
+  - name: Deploy NTP conf file for Debian
+    template:
+       src: ntp_debian.conf.j2
+       dest: /etc/ntp.conf
+    when: ansible_os_family == "Debian"
+    notify:
+       - Start & enable NTP on Ubuntu
+
+  - name: Dir for dev data
+    file:
+      path: /opt/devdata
+      state: directory
+      mode: 777
+
+ 

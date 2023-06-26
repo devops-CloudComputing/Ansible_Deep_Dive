@@ -1,0 +1,31 @@
+---
+- hosts: localhost 
+  gather_facts: false
+  collections:
+    - community.aws
+  tasks:
+   - name: Create key pairs for AWS
+     amazon.aws.ec2_key:
+          name: sample
+          region: ap-south-1
+     register: keyout 
+    
+   - name: save key
+     copy:
+       content: "{{keyout.key.private_key}}"
+       dest: ./sample.pem
+     when: keyout.changed == True
+
+   - ec2:
+        region: ap-south-1 
+        instance_type: t2.micro 
+        image: ami-057752b3f1d6c4d6c 
+        key_name: sample
+        wait: yes
+        exact_count: 1
+        instance_tags:
+           Name: db01
+           db: postgres
+        count_tag:
+            Name: db01
+            db: postgres
